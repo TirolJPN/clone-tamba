@@ -2,14 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"strconv"
-
 	"github.com/spf13/cobra"
 )
 
-func fetchMySQL *cobra.Command {
-	cmd := &cobra.Command{
-		
-	}
+var RootCmd = &cobra.Command{
+	Use:   "culc",
+	Short: "command line calculator",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("root command")
+	},
 }

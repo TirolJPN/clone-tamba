@@ -1,23 +1,15 @@
-package main 
+package main
 
 import (
-	"os"
-	"fmt"
-    "github.com/urfave/cli"
+  "fmt"
+  "os"
+
+  "github.com/TirolJPN/clone-tamba/cmd"
 )
 
 func main() {
-  app := cli.NewApp()
-
-  app.Name = "clone-tamba"
-  app.Usage = "This app is clone of tamba system"
-  app.Version = "0.0.1"
-
-  app.Action = func (context *cli.Context) error {
-    fmt.Println("An argument is needed.")
-    return nil
+  if err := cmd.RootCmd.Execute(); err != nil {
+    fmt.Fprintf(os.Stderr, "%s: %v\n", os.Args[0], err)
+    os.Exit(-1)
   }
-
-  app.Run(os.Args)
-  
 }
