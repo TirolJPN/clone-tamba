@@ -9,12 +9,12 @@ import (
 func main() {
   app := cli.NewApp()
 
-  app.Name = "sampleApp"
-  app.Usage = "This app echo input arguments"
+  app.Name = "clone-tamba"
+  app.Usage = "This app is clone of tamba system"
   app.Version = "0.0.1"
 
   app.Action = func (context *cli.Context) error {
-    fmt.Println(context.Args().Get(0))
+    fmt.Println("An argument is needed.")
     return nil
   }
 
