@@ -16,3 +16,5 @@
 
 # for jetbrain files
 .idea/*
+
+.env
