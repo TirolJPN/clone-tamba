@@ -16,7 +16,7 @@ func fetchCmd() *cobra.Command {
 			if len(args) == 0 {
 				return nil
 			}
-			returnAlls()
+			sql.ReturnAlls()
 			return nil
 		},
 	}

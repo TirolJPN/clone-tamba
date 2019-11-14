@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func returnAlls() {
+func ReturnAlls() {
 	// usage: cnn := sql.Open("mysql", "user:password@tcp(host:port)/dbname")
 	dataSourceName := fmt.Sprintf("%s:%s@(%s:%s)/%s", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_DATABASE"))
 	db, err := sql.Open("mysql", dataSourceName)
