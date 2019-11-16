@@ -1,17 +1,22 @@
-package main 
+package main
 
 import (
-    "os"
-    "github.com/urfave/cli"
+	"fmt"
+	"github.com/joho/godotenv"
+	"log"
+	"os"
+
+	"github.com/TirolJPN/clone-tamba/cmd"
 )
 
 func main() {
-  app := cli.NewApp()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-  app.Name = "sampleApp"
-  app.Usage = "This app echo input arguments"
-  app.Version = "0.0.1"
-
-  app.Run(os.Args)
-  
+	if err := cmd.RootCmd.Execute(); err != nil {
+		fmt.Fprintf(os.Stderr, "%s: %v\n", os.Args[0], err)
+		os.Exit(-1)
+	}
 }
