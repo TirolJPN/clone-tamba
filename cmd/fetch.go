@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/TirolJPN/clone-tamba/sql/file"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/cobra"
-	"github.com/TirolJPN/clone-tamba/sql/file"
 )
 
 func fetchCmd() *cobra.Command {
@@ -17,9 +17,13 @@ func fetchCmd() *cobra.Command {
 				print("An argument is needed at least to fetch problem information by problem id")
 				return nil
 			}
-			for _, elem := range args {
-				print(elem)
-				file.StatusAndFilePath(elem)
+			for _, problem_id := range args {
+				// process for each problem_id
+				fetchList := file.StatusAndFilePath(problem_id)
+				for _, culumn := range fetchList {
+					println(culumn[0], culumn[1], culumn[2])
+				}
+				// process to make directed graph by timestamp
 			}
 			return nil
 		},
