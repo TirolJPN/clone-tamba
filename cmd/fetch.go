@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/TirolJPN/clone-tamba/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/spf13/cobra"
+	"github.com/TirolJPN/clone-tamba/sql/file"
 )
 
 func fetchCmd() *cobra.Command {
@@ -14,9 +14,13 @@ func fetchCmd() *cobra.Command {
 		Args: cobra.RangeArgs(1,100),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
+				print("An argument is needed at least to fetch problem information by problem id")
 				return nil
 			}
-			sql.ReturnAlls()
+			for _, elem := range args {
+				print(elem)
+				file.StatusAndFilePath(elem)
+			}
 			return nil
 		},
 	}
