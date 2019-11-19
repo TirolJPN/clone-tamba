@@ -1,12 +1,15 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/TirolJPN/clone-tamba/sql/file"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 )
 
 func fetchCmd() *cobra.Command {
@@ -25,21 +28,19 @@ func fetchCmd() *cobra.Command {
 							problemId +
 							"/cosine/complete/result/"
 				filePaths := dirWalk(baseDir)
-				for _, tmp := range(filePaths) {
-					println(tmp)
-				}
 
 				fetchList := file.StatusAndFilePath(problemId)
 				for _, culumn := range fetchList {
 					fileName := culumn[0]
 					submissionId := culumn[1]
 					timeStamp := culumn[2]
-
-					println(fileName, submissionId, timeStamp)
+					lexicalIndex, metricalIndex, err :=  searchFilePath(filePaths, fileName)
+					if err != nil {
+						fmt.Printf("Not found :%d %d\n", fileName, submissionId)
+					}
+					fmt.Printf("%d %d %s %s %s\n", lexicalIndex, metricalIndex, fileName, submissionId, timeStamp)
 				}
-
-
-				// process to make directed graph by timestamp
+				// process to make directed graph by timestamps
 			}
 			return nil
 		},
@@ -48,14 +49,24 @@ func fetchCmd() *cobra.Command {
 }
 
 // ファイル名を引数にして，env情報をもとにファイル検索を行い，ファイルの絶対パスを表す文字列を返す
-func searchFilePath() {}
+func searchFilePath(filePaths []string, fileName string) (lexicalIndex int, metriaclIndex int, err error ){
+	for _, filePath := range filePaths {
+		sliced := strings.Split(filePath, "\\")
+		lexicalIndex, _ := strconv.Atoi(sliced[len(sliced) - 3])
+		metriaclIndex, _ := strconv.Atoi(sliced[len(sliced) - 2])
+		targetFileName := sliced[len(sliced) - 1]
+		if targetFileName == fileName {
+			return lexicalIndex, metriaclIndex, nil
+		}
+	}
+	return -1, -1, os.ErrExist
+}
 
 func dirWalk(dir string ) []string {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		panic(err)
 	}
-
 	var paths []string
 	for _, file := range files {
 		if file.IsDir() {
@@ -64,7 +75,6 @@ func dirWalk(dir string ) []string {
 		}
 		paths = append(paths, filepath.Join(dir, file.Name()))
 	}
-
 	return paths
 }
 
