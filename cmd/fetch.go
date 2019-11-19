@@ -4,6 +4,9 @@ import (
 	"github.com/TirolJPN/clone-tamba/sql/file"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
 func fetchCmd() *cobra.Command {
@@ -17,17 +20,61 @@ func fetchCmd() *cobra.Command {
 				print("An argument is needed at least to fetch problem information by problem id")
 				return nil
 			}
-			for _, problem_id := range args {
-				// process for each problem_id
-				fetchList := file.StatusAndFilePath(problem_id)
-				for _, culumn := range fetchList {
-					println(culumn[0], culumn[1], culumn[2])
+			for _, problemId := range args {
+				baseDir := os.Getenv("PATH_FROM_WORKSPACE_TO_CLUSTERING_RESULT") +
+							problemId +
+							"/cosine/complete/result/"
+				filePaths := dirWalk(baseDir)
+				for _, tmp := range(filePaths) {
+					println(tmp)
 				}
+
+				fetchList := file.StatusAndFilePath(problemId)
+				for _, culumn := range fetchList {
+					fileName := culumn[0]
+					submissionId := culumn[1]
+					timeStamp := culumn[2]
+
+					println(fileName, submissionId, timeStamp)
+				}
+
+
 				// process to make directed graph by timestamp
 			}
 			return nil
 		},
 	}
-
 	return cmd
 }
+
+// ファイル名を引数にして，env情報をもとにファイル検索を行い，ファイルの絶対パスを表す文字列を返す
+func searchFilePath() {}
+
+func dirWalk(dir string ) []string {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		panic(err)
+	}
+
+	var paths []string
+	for _, file := range files {
+		if file.IsDir() {
+			paths = append(paths, dirWalk(filepath.Join(dir, file.Name()))...)
+			continue
+		}
+		paths = append(paths, filepath.Join(dir, file.Name()))
+	}
+
+	return paths
+}
+
+
+
+
+
+
+
+
+
+
+
