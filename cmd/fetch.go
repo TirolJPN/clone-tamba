@@ -14,7 +14,6 @@ import (
 )
 
 
-
 func fetchCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "fetch",
@@ -22,7 +21,7 @@ func fetchCmd() *cobra.Command {
 		// RangeArgs(min, max) - the command will report an error if the number of args is not between the minimum and maximum number of expected args.
 		Args: cobra.RangeArgs(1,100),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			Nodes := []gragh.Node{}
+			var nodes gragh.Nodes
 
 			if len(args) == 0 {
 				print("An argument is needed at least to fetch problem information by problem id")
@@ -38,19 +37,23 @@ func fetchCmd() *cobra.Command {
 				for _, culumn := range fetchList {
 					fileName := culumn[0]
 					submissionId := culumn[1]
-					timeStamp := culumn[2]
+					timestamp := culumn[2]
 					filePath, lexicalIndex, metricalIndex, err :=  searchFilePath(filePaths, fileName)
 					if err != nil {
-						defer fmt.Printf("Not found :%d %d\n", fileName, submissionId)
+						fmt.Printf("Not found :%s %s\n", fileName, submissionId)
 					}else {
-						tmpNode := gragh.Node
-						Nodes := append(Nodes, tmpNode)
-						print(Nodes)
-						fmt.Printf("%d %d %s %s %s\n", lexicalIndex, metricalIndex, fileName, submissionId, timeStamp)
+						tmp := gragh.NewNode(submissionId, fileName, filePath, timestamp, lexicalIndex, metricalIndex)
+						println(tmp)
+						nodes = append(nodes, gragh.NewNode(submissionId, fileName, filePath, timestamp, lexicalIndex, metricalIndex))
 					}
 
 				}
 				// process to make directed graph by timestamps
+			}
+
+			// for tests
+			for _, elem := range nodes {
+				fmt.Println(elem)
 			}
 			return nil
 		},

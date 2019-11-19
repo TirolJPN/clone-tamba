@@ -1,23 +1,26 @@
 package gragh
 
 type Node struct {
-	submission_id string
-	file_name string
-	file_path string
-	timestamp string
-	lexical_index int
-	metrical_index int
-	before_node *Node
-	next_node *Node
+	SubmissionId  string
+	FileName      string
+	FilePath       string
+	Timestamp      string
+	LexicalIndex  int
+	MetricalIndex int
+	BeforeNode    *Node
+	NextNode      *Node
 }
 
-func newNode(submissionId string, fileName string, filePath string, timestamp string, lexicalIndex int, metricalIndex int) *Node {
-	node := new(Node)
-	node.submission_id = submissionId
-	node.file_name = fileName
-	node.file_path = filePath
-	node.timestamp = timestamp
-	node.lexical_index = lexicalIndex
-	node.metrical_index = metricalIndex
+type Nodes []*Node
+
+
+func NewNode(submissionId string, fileName string, filePath string, timestamp string, lexicalIndex int, metricalIndex int) (node *Node) {
+	node = new(Node)
+	node.SubmissionId = submissionId
+	node.FileName = fileName
+	node.FilePath = filePath
+	node.Timestamp = timestamp
+	node.LexicalIndex = lexicalIndex
+	node.MetricalIndex = metricalIndex
 	return node
 }
