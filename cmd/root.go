@@ -6,8 +6,8 @@ import (
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "culc",
-	Short: "command line calculator",
+	Use:   "root",
+	Short: "root command for all commands",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("root command")
 	},
