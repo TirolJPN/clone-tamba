@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/TirolJPN/clone-tamba/gragh"
 	"github.com/TirolJPN/clone-tamba/sql/file"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/cobra"
@@ -12,6 +13,8 @@ import (
 	"strings"
 )
 
+
+
 func fetchCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "fetch",
@@ -19,6 +22,8 @@ func fetchCmd() *cobra.Command {
 		// RangeArgs(min, max) - the command will report an error if the number of args is not between the minimum and maximum number of expected args.
 		Args: cobra.RangeArgs(1,100),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			Nodes := []gragh.Node{}
+
 			if len(args) == 0 {
 				print("An argument is needed at least to fetch problem information by problem id")
 				return nil
@@ -34,11 +39,16 @@ func fetchCmd() *cobra.Command {
 					fileName := culumn[0]
 					submissionId := culumn[1]
 					timeStamp := culumn[2]
-					lexicalIndex, metricalIndex, err :=  searchFilePath(filePaths, fileName)
+					filePath, lexicalIndex, metricalIndex, err :=  searchFilePath(filePaths, fileName)
 					if err != nil {
-						fmt.Printf("Not found :%d %d\n", fileName, submissionId)
+						defer fmt.Printf("Not found :%d %d\n", fileName, submissionId)
+					}else {
+						tmpNode := gragh.Node
+						Nodes := append(Nodes, tmpNode)
+						print(Nodes)
+						fmt.Printf("%d %d %s %s %s\n", lexicalIndex, metricalIndex, fileName, submissionId, timeStamp)
 					}
-					fmt.Printf("%d %d %s %s %s\n", lexicalIndex, metricalIndex, fileName, submissionId, timeStamp)
+
 				}
 				// process to make directed graph by timestamps
 			}
@@ -49,19 +59,20 @@ func fetchCmd() *cobra.Command {
 }
 
 // ファイル名を引数にして，env情報をもとにファイル検索を行い，ファイルの絶対パスを表す文字列を返す
-func searchFilePath(filePaths []string, fileName string) (lexicalIndex int, metriaclIndex int, err error ){
+func searchFilePath(filePaths []string, fileName string) (filePath string, lexicalIndex int, metriaclIndex int, err error ){
 	for _, filePath := range filePaths {
 		sliced := strings.Split(filePath, "\\")
 		lexicalIndex, _ := strconv.Atoi(sliced[len(sliced) - 3])
 		metriaclIndex, _ := strconv.Atoi(sliced[len(sliced) - 2])
 		targetFileName := sliced[len(sliced) - 1]
 		if targetFileName == fileName {
-			return lexicalIndex, metriaclIndex, nil
+			return filePath, lexicalIndex, metriaclIndex, nil
 		}
 	}
-	return -1, -1, os.ErrExist
+	return "", -1, -1, os.ErrExist
 }
 
+// 引数に与えたパス以下のすべてのフォルダ・ファイルを列挙し，リストに格納する
 func dirWalk(dir string ) []string {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
